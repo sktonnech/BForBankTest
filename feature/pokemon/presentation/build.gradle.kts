@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.test
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 
 plugins {
@@ -57,8 +58,9 @@ dependencies {
 
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.test.kotlinx.coroutines.test)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.turbine)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)

@@ -17,7 +17,7 @@ internal class PokemonListViewModel @Inject constructor(
     private val observePokemonListUseCase: ObservePokemonListUseCase
 ) : BaseViewModel<PokemonListAction, PokemonListUiState>(initialState = PokemonListUiState()) {
 
-    private var allPokemonList: List<PokemonUI> = emptyList() // Stocke tous les Pokémon
+    private var allPokemonList: List<PokemonUI> = emptyList() // contain all loaded Pokemon
 
     init {
         fetchPokemon()
@@ -61,7 +61,7 @@ internal class PokemonListViewModel @Inject constructor(
         }
     }
 
-    private fun fetchPokemon(isLoadingMore: Boolean = false) {
+    fun fetchPokemon(isLoadingMore: Boolean = false) {
         launch {
             updateState {
                 copy(

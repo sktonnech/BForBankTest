@@ -49,7 +49,7 @@ class ObservePokemonListUseCaseTest {
             val givenErrorMessage = "exceptionMessage"
 
             //Given
-            coEvery { pokemonRepository.getListPokemon() } returns flow { throw Exception(givenErrorMessage) }
+            coEvery { pokemonRepository.getListPokemon() } returns flow { emit(throw Exception(givenErrorMessage)) }
 
             //When
             val result = observePokemonListUseCase()
