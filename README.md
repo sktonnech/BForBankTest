@@ -12,11 +12,11 @@
 ![Capture d’écran 2024-10-21 à 04 32 59](https://github.com/user-attachments/assets/5f875fd8-b907-414c-af7f-80c2f1e0afa4)
 
 L'architecture du projet est basé sur : 
-  - la Clean archi avec un module par couche (data/domain/presentation)
   - décomposition en **feature** (exemple : pokemon) mais on peut imaginer plusieur autres features.
-  - Aussi dans chaque feature il y a un découppage en module (data/domain/presentation) de Clean Archi.
+  - chaque feature il y a un découppage en module (data/domain/presentation) de Clean Archi.
+  - dans la module app aussi j'ai crée un module par couche (data/domain/presentation). dans mon test ces 3 modules ne serve à rien mais on peut imaginer un screen qui rassemble 
+     plusieur feature donc cette screen va etre placer dans le presentation de **app**
   - j'ai ajouté aussi un module **core** qui contient aujourd'hui que le module de **design-system**, mais on peut avoir des autres modules dans core
-
 
 ## Techno :
   - jetpack compose
@@ -24,6 +24,9 @@ L'architecture du projet est basé sur :
   - coroutine/flow
   - injecton de dependence avec Hilt
 
+## Choses que je voulais les faires mais j'ai pas eu le temps pour les faire:
+  - cleaner les fichier gradle et crée un module buldSrc qui contient des plugin qui rassemble plusieur implementation ..
+  - tester la repository
 
 ## Quelques Screens :
 
