@@ -44,7 +44,7 @@ class ObservePokemonListUseCaseTest {
     }
 
     @Test
-    fun `given error, then emit empty list`(){
+    fun `given Exception, then emit error`(){
         runTest {
             val givenErrorMessage = "exceptionMessage"
 

@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bforbank.bforbanktest.presentation.R
+import com.bforbank.bforbanktest.feature.pokemon.presentation.R
 import com.bforbank.bforbanktest.presentation.pokemon.model.PokemonUI
 import com.bforbank.core.designsystem.theme.BForBankTheme
 import com.bforbank.core.designsystem.utils.LightAndDarkPreviews

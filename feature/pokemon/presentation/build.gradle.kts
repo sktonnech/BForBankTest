@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.test
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 
 plugins {
@@ -13,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bforbank.bforbanktest.presentation"
+    namespace = "com.bforbank.bforbanktest.feature.pokemon.presentation"
     compileSdk = 34
 
     java {

@@ -1,13 +1,13 @@
+import org.gradle.kotlin.dsl.android
+
 plugins {
-    kotlin("kapt")
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.dagger.hilt)
-    id("dagger.hilt.android.plugin")
+    kotlin("kapt")
 }
 
 android {
-    namespace = "com.bforbank.bforbanktest.feature.pokemon.data"
+    namespace = "com.bforbank.bforbanktest.data"
     compileSdk = 34
 
     java {
@@ -27,7 +27,7 @@ kapt {
 
 dependencies {
 
-    implementation(project(":feature:pokemon:domain"))
+    implementation(project(":app:domain"))
 
     implementation(libs.androidx.core.ktx)
 

@@ -25,7 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bforbank.bforbanktest.presentation.R
+import com.bforbank.bforbanktest.feature.pokemon.presentation.R
 import com.bforbank.bforbanktest.presentation.pokemon.model.PokemonUI
 import com.bforbank.core.designsystem.theme.BForBankTheme
 
