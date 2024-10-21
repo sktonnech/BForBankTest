@@ -62,6 +62,10 @@ android {
 
 dependencies {
 
+    implementation(project(":app:presentation"))
+    implementation(project(":app:domain"))
+    implementation(project(":app:data"))
+
     implementation(project(":feature:pokemon:presentation"))
     implementation(project(":feature:pokemon:data"))
     implementation(project(":core:design-system"))

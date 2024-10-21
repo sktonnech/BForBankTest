@@ -17,7 +17,8 @@ internal class PokemonListViewModel @Inject constructor(
     private val observePokemonListUseCase: ObservePokemonListUseCase
 ) : BaseViewModel<PokemonListAction, PokemonListUiState>(initialState = PokemonListUiState()) {
 
-    private var allPokemonList: List<PokemonUI> = emptyList() // contain all loaded Pokemon
+    // contain all loaded Pokemon without any filter
+    private var allPokemonList: List<PokemonUI> = emptyList()
 
     init {
         fetchPokemon()
@@ -38,8 +39,8 @@ internal class PokemonListViewModel @Inject constructor(
         }
     }
 
-
-    private fun onSearchQueryChanged(textSearch: String) {
+    //
+    fun onSearchQueryChanged(textSearch: String) {
         launch {
             updateState {
                 copy(searchText = textSearch)
@@ -47,10 +48,11 @@ internal class PokemonListViewModel @Inject constructor(
         }
     }
 
-
-    fun observeSearchResult() {
+    //observe changes on filter and update state according to it
+    private fun observeSearchResult() {
         launch {
-            uiState.map { it.searchText }.distinctUntilChanged()
+            uiState.map { it.searchText }
+                .distinctUntilChanged()
                 .debounce(300L) // debounce of 300L before starting search
                 .collect { query ->
                     updateState {
