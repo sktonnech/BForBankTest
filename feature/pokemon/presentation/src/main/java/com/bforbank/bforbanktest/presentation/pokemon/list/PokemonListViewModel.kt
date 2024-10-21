@@ -6,7 +6,6 @@ import com.bforbank.bforbanktest.presentation.pokemon.model.PokemonUI
 import com.bforbank.bforbanktest.presentation.pokemon.model.toPokemonUIList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,16 +27,13 @@ internal class PokemonListViewModel @Inject constructor(
     override fun handle(action: PokemonListAction) {
         when (action) {
             is PokemonListAction.Retry -> fetchPokemon()
-            is PokemonListAction.LoadMore -> fetchPokemon(true)
-            is PokemonListAction.SelectPokemon -> {}
+            is PokemonListAction.LoadMore -> fetchPokemon(isLoadingMore = true)
+            is PokemonListAction.SelectPokemon -> { }
             is PokemonListAction.ConsumeDisplayLoadingMoreError -> {
                 launch {
-                    updateState {
-                        copy(hasErrorLoadingMore = false)
-                    }
+                    updateState { copy(hasErrorLoadingMore = false) }
                 }
             }
-
             is PokemonListAction.SearchPokemon -> onSearchQueryChanged(action.name)
         }
     }
