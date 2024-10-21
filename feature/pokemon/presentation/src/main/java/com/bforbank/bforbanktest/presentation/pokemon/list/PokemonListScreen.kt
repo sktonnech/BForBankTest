@@ -3,12 +3,11 @@ package com.bforbank.bforbanktest.presentation.pokemon.list
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -17,15 +16,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import com.bforbank.bforbanktest.domain.model.PokemonEntity
 import com.bforbank.bforbanktest.presentation.pokemon.list.uicomponent.ErrorMessage
 import com.bforbank.bforbanktest.presentation.pokemon.list.uicomponent.LoadingMessage
-import com.bforbank.bforbanktest.presentation.pokemon.list.uicomponent.PokemonListItem
+import com.bforbank.bforbanktest.presentation.pokemon.list.uicomponent.PokemonList
 import com.bforbank.bforbanktest.presentation.pokemon.model.PokemonUI
 import com.bforbank.core.designsystem.organism.TopAppBarState
 import com.bforbank.core.designsystem.template.BForBankScreenTemplate
-import kotlinx.collections.immutable.ImmutableList
+import com.bforbank.core.designsystem.theme.BForBankTheme
+import com.bforbank.core.designsystem.utils.LightAndDarkPreviews
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun PokemonListScreen(
@@ -34,7 +33,8 @@ internal fun PokemonListScreen(
     onItemClicked: (PokemonUI) -> Unit,
     onRetryClicked: () -> Unit,
     onLoadMore: () -> Unit,
-    onLoadMoreError: () -> Unit
+    onLoadMoreError: () -> Unit,
+    onSearchPokemon: (String) ->Unit
 ) {
 
     val context = LocalContext.current
@@ -54,7 +54,19 @@ internal fun PokemonListScreen(
 
     BForBankScreenTemplate(
         modifier = modifier,
-        topAppBarState = TopAppBarState(title = "Pokemon List"),
+        topAppBarState = TopAppBarState(
+            actions = {
+                TextField(
+                    value = pokemonListUiState().searchText,
+                    onValueChange = {
+                        onSearchPokemon(it)
+                    },
+                    placeholder = { Text("Search Pokémon") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        ),
 
         ) { paddingValues ->
         Box(
@@ -63,7 +75,6 @@ internal fun PokemonListScreen(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-
             if (isLoading) {
                 LoadingMessage()
             } else if (displayErrorMessage) {
@@ -74,55 +85,91 @@ internal fun PokemonListScreen(
                     pokemonList = pokemonListUiState().pokemonList,
                     onItemClicked = onItemClicked,
                     onLoadMore = onLoadMore,
-                    isLoadingMore = isLoadingMore
+                    isLoadingMore = isLoadingMore,
+                    searchText =  pokemonListUiState().searchText
                 )
             }
         }
     }
 }
 
+@LightAndDarkPreviews
 @Composable
-fun PokemonList(
-    modifier: Modifier,
-    pokemonList: ImmutableList<PokemonUI>,
-    listState: LazyListState = rememberLazyListState(),
-    isLoadingMore: Boolean,
-    onItemClicked: (PokemonUI) -> Unit,
-    onLoadMore: () -> Unit
-) {
-
-    val reachedBottom: Boolean by remember { derivedStateOf { listState.reachedBottom() } }
-
-    // load more if scrolled to bottom
-    LaunchedEffect(reachedBottom) {
-        if (reachedBottom && !isLoadingMore) {
-            println("slim loadMore")
-            onLoadMore()
-        }
-    }
-
-    LazyColumn(
-        modifier = modifier,
-        state = listState
-    ) {
-        items(
-            items = pokemonList,
-            key = { pokemon: PokemonUI -> pokemon.name },
-        ) { pokemon ->
-            PokemonListItem(pokemon, onItemClicked = onItemClicked)
-        }
-        if (isLoadingMore) {
-            item {
-                LoadingMessage()
-            }
+fun PokemonListScreenPreview() {
+    Surface {
+        BForBankTheme {
+          PokemonListScreen(
+              modifier = Modifier,
+              pokemonListUiState = {
+                  PokemonListUiState(
+                      pokemonList = persistentListOf(
+                          PokemonUI(id = 1, name = "name1", url = "url"),
+                          PokemonUI(id = 2, name = "name2", url = "url"),
+                          PokemonUI(id = 3, name = "name3", url = "url"),
+                          PokemonUI(id = 4, name = "name4", url = "url"),
+                      ),
+                      isLoading = false
+                  )
+              },
+              onItemClicked = {},
+              onRetryClicked = {},
+              onLoadMore = {},
+              onLoadMoreError = {},
+              onSearchPokemon = {}
+          )
         }
     }
 }
 
-private fun LazyListState.reachedBottom(): Boolean {
-    val lastVisibleItem = this.layoutInfo.visibleItemsInfo.lastOrNull()
-    return this.lastScrolledForward
-            && lastVisibleItem?.index != 0
-            && lastVisibleItem?.index == this.layoutInfo.totalItemsCount - 2
+@LightAndDarkPreviews
+@Composable
+fun PokemonListScreenErrorPreview() {
+    Surface {
+        BForBankTheme {
+          PokemonListScreen(
+              modifier = Modifier,
+              pokemonListUiState = {
+                  PokemonListUiState(
+                      isLoading = false,
+                      displayErrorMessage = true
+                  )
+              },
+              onItemClicked = {},
+              onRetryClicked = {},
+              onLoadMore = {},
+              onLoadMoreError = {},
+              onSearchPokemon = {}
+          )
+        }
+    }
 }
 
+
+@LightAndDarkPreviews
+@Composable
+fun PokemonListScreenLoadMorePreview() {
+    Surface {
+        BForBankTheme {
+            PokemonListScreen(
+                modifier = Modifier,
+                pokemonListUiState = {
+                    PokemonListUiState(
+                        pokemonList = persistentListOf(
+                            PokemonUI(id = 1, name = "name1", url = "url"),
+                            PokemonUI(id = 2, name = "name2", url = "url"),
+                            PokemonUI(id = 3, name = "name3", url = "url"),
+                            PokemonUI(id = 4, name = "name4", url = "url"),
+                        ),
+                        isLoading = false,
+                        isLoadingMore = true
+                    )
+                },
+                onItemClicked = {},
+                onRetryClicked = {},
+                onLoadMore = {},
+                onLoadMoreError = {},
+                onSearchPokemon = {}
+            )
+        }
+    }
+}

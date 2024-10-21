@@ -16,9 +16,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bforbank.bforbanktest.presentation.R
@@ -29,8 +35,13 @@ import com.bforbank.core.designsystem.utils.LightAndDarkPreviews
 @Composable
 internal fun PokemonListItem(
     pokemon: PokemonUI,
+    searchText: String = "",
     onItemClicked: (PokemonUI) -> Unit
 ) {
+    val annotatedString = remember(pokemon.name, searchText) {
+        buildAnnotatedString(pokemon.name, searchText)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,7 +72,7 @@ internal fun PokemonListItem(
                     fontSize = 14.sp
                 )
                 Text(
-                    text = pokemon.name,
+                    text = annotatedString,
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 20.sp
                 )
@@ -71,13 +82,48 @@ internal fun PokemonListItem(
 }
 
 
+fun buildAnnotatedString(pokemonName: String, searchText: String): AnnotatedString =
+    buildAnnotatedString {
+        val searchLowerCase = searchText.lowercase()
+        var startIndex = 0
+        if (searchText.isNotEmpty()) {
+            while (startIndex < pokemonName.length) {
+                val index = pokemonName.lowercase().indexOf(searchLowerCase, startIndex)
+                if (index == -1) {
+                    append(pokemonName.substring(startIndex))
+                    break
+                } else {
+                    append(pokemonName.substring(startIndex, index))
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(pokemonName.substring(index, index + searchText.length))
+                    }
+                    startIndex = index + searchText.length
+                }
+            }
+        } else append(pokemonName)
+    }
+
 @LightAndDarkPreviews
 @Composable
 fun PokemonListItemPreview() {
     Surface {
-        BForBankTheme() {
+        BForBankTheme {
             PokemonListItem(
                 pokemon = PokemonUI(id = 1, name = "picacku", url = "url"),
+                onItemClicked = {}
+            )
+        }
+    }
+}
+
+@LightAndDarkPreviews
+@Composable
+fun PokemonListItemWithSearchPreview() {
+    Surface {
+        BForBankTheme {
+            PokemonListItem(
+                pokemon = PokemonUI(id = 1, name = "picacku", url = "url"),
+                searchText = "pi",
                 onItemClicked = {}
             )
         }

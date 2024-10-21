@@ -5,16 +5,13 @@ import com.bforbank.bforbanktest.presentation.pokemon.model.PokemonUI
 
 object PokemonDetailsNavInfo {
     const val ROUTE = "details_route"
+
      object Args {
          const val SELECTED_POKEMON = "selected_pokemon"
      }
 
-
-
-    fun NavController.navigateToPokemonDetailsScreen(
-        pokemonEntity: PokemonUI,
-     ) {
-         currentBackStackEntry?.savedStateHandle?.set(Args.SELECTED_POKEMON, pokemonEntity)
+    fun NavController.navigateToPokemonDetailsScreen(pokemonUI: PokemonUI) {
+         currentBackStackEntry?.savedStateHandle?.set(Args.SELECTED_POKEMON, pokemonUI)
          navigate(ROUTE)
      }
 }

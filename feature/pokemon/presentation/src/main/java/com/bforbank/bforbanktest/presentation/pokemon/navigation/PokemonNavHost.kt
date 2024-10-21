@@ -1,6 +1,5 @@
 package com.bforbank.bforbanktest.presentation.pokemon.navigation
 
-
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -16,7 +15,6 @@ import com.bforbank.bforbanktest.presentation.pokemon.list.PokemonListNavInfo
 import com.bforbank.bforbanktest.presentation.pokemon.list.PokemonListScreenRoute
 import com.bforbank.bforbanktest.presentation.pokemon.model.PokemonUI
 
-
 @Composable
 fun PokemonNavHost() {
     val navController = rememberNavController()
@@ -29,15 +27,14 @@ fun PokemonNavHost() {
     }
 }
 
-
 fun NavGraphBuilder.pokemonDetailsNavGraph(navController: NavController) {
     composable(route = PokemonDetailsNavInfo.ROUTE) {
 
-        val selectedPokemon = navController.findSavedField<PokemonUI>(
+        val selectedPokemon : PokemonUI? = navController.findSavedField<PokemonUI>(
             PokemonDetailsNavInfo.Args.SELECTED_POKEMON
         ) ?: run {
             Log.e("navigation", "Selected pokemon  not found. Cannot navigate to details screen")
-            return@composable
+            null
         }
         PokemonDetailsScreenRoute(
             selectedPokemon = selectedPokemon,

@@ -2,10 +2,15 @@ package com.bforbank.bforbanktest.presentation.pokemon.list
 
 import com.bforbank.bforbanktest.domain.usecase.ObservePokemonListUseCase
 import com.bforbank.bforbanktest.presentation.base.BaseViewModel
+import com.bforbank.bforbanktest.presentation.pokemon.model.PokemonUI
 import com.bforbank.bforbanktest.presentation.pokemon.model.toPokemonUIList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -13,8 +18,11 @@ internal class PokemonListViewModel @Inject constructor(
     private val observePokemonListUseCase: ObservePokemonListUseCase
 ) : BaseViewModel<PokemonListAction, PokemonListUiState>(initialState = PokemonListUiState()) {
 
+    private var allPokemonList: List<PokemonUI> = emptyList() // Stocke tous les Pokémon
+
     init {
         fetchPokemon()
+        observeSearchResult()
     }
 
     override fun handle(action: PokemonListAction) {
@@ -29,6 +37,31 @@ internal class PokemonListViewModel @Inject constructor(
                     }
                 }
             }
+
+            is PokemonListAction.SearchPokemon -> onSearchQueryChanged(action.name)
+        }
+    }
+
+
+    private fun onSearchQueryChanged(textSearch: String) {
+        launch {
+            updateState {
+                copy(searchText = textSearch)
+            }
+        }
+    }
+
+
+    fun observeSearchResult() {
+        launch {
+            uiState.map { it.searchText }.distinctUntilChanged()
+                .debounce(300L) // debounce of 300L before starting search
+                .collect { query ->
+                    updateState {
+                        val filteredList = allPokemonList.filter(query).toPersistentList()
+                        copy(pokemonList = filteredList)
+                    }
+                }
         }
     }
 
@@ -52,9 +85,16 @@ internal class PokemonListViewModel @Inject constructor(
                 }
             }.collect { list ->
                 updateState {
-                    val newPokemonList  = if (isLoadingMore) pokemonList + list.toPokemonUIList() else list.toPokemonUIList()
+                    allPokemonList =
+                        if (isLoadingMore) allPokemonList + list.toPokemonUIList() else list.toPokemonUIList()
+
+                    val filteredList = if (uiState.value.searchText.isEmpty()) {
+                        allPokemonList
+                    } else {
+                        pokemonList + list.toPokemonUIList().filter(uiState.value.searchText)
+                    }
                     copy(
-                        pokemonList = newPokemonList.toPersistentList(),
+                        pokemonList = filteredList.toPersistentList(),
                         isLoading = false,
                         displayErrorMessage = false,
                         isLoadingMore = false
@@ -64,3 +104,6 @@ internal class PokemonListViewModel @Inject constructor(
         }
     }
 }
+
+fun List<PokemonUI>.filter(searchText: String): List<PokemonUI> =
+    this.filter { it.name.contains(searchText, ignoreCase = true) }

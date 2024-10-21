@@ -1,6 +1,5 @@
 package com.bforbank.core.designsystem.template
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -13,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.bforbank.core.designsystem.organism.TopAppBarState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +25,7 @@ fun BForBankScreenTemplate(
         topBar = {
             topAppBarState?.let { state ->
                 TopAppBar(
-                    modifier = Modifier.background(Color.Red),
+                    modifier = Modifier,
                     title = {
                         state.title?.let {
                             Text(text = it)
@@ -38,6 +36,11 @@ fun BForBankScreenTemplate(
                             IconButton(onClick = { onBackClicked() }) {
                                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                             }
+                        }
+                    },
+                    actions = {
+                        state.actions?.let {
+                            it()
                         }
                     }
                 )

@@ -21,6 +21,9 @@ internal fun PokemonListScreenRoute(
         onItemClicked = onItemClicked,
         onRetryClicked = rememberLambda (viewModel){ viewModel.handle(PokemonListAction.Retry) },
         onLoadMore = rememberLambda (viewModel){ viewModel.handle(PokemonListAction.LoadMore) },
-        onLoadMoreError = rememberLambda (viewModel){ viewModel.handle(PokemonListAction.ConsumeDisplayLoadingMoreError) }
+        onLoadMoreError = rememberLambda (viewModel){ viewModel.handle(PokemonListAction.ConsumeDisplayLoadingMoreError) },
+        onSearchPokemon = rememberLambda (viewModel) { searchText ->
+            viewModel.handle(PokemonListAction.SearchPokemon(searchText))
+        }
     )
 }
